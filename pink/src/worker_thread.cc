@@ -30,11 +30,13 @@ WorkerThread::~WorkerThread() {
   delete(pink_epoll_);
 }
 
+// 获取连接数, conns_是一个fd到指向PinkItem的指针
 int WorkerThread::conn_num() const {
   slash::ReadLock l(&rwlock_);
   return conns_.size();
 }
 
+// 获取conns_信息，放到一个vector里返回
 std::vector<ServerThread::ConnInfo> WorkerThread::conns_info() const {
   std::vector<ServerThread::ConnInfo> result;
   slash::ReadLock l(&rwlock_);
@@ -48,6 +50,7 @@ std::vector<ServerThread::ConnInfo> WorkerThread::conns_info() const {
   return result;
 }
 
+// 根据fd删除某个连接
 PinkConn* WorkerThread::MoveConnOut(int fd) {
   slash::WriteLock l(&rwlock_);
   PinkConn* conn = nullptr;
@@ -61,6 +64,7 @@ PinkConn* WorkerThread::MoveConnOut(int fd) {
   return conn;
 }
 
+// 真正的处理逻辑
 void *WorkerThread::ThreadMain() {
   int nfds;
   PinkFiredEvent *pfe = NULL;
@@ -80,7 +84,6 @@ void *WorkerThread::ThreadMain() {
   }
 
   while (!should_stop()) {
-
     if (cron_interval_ > 0) {
       gettimeofday(&now, NULL);
       if (when.tv_sec > now.tv_sec || (when.tv_sec == now.tv_sec && when.tv_usec > now.tv_usec)) {

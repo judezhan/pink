@@ -11,6 +11,7 @@
 
 namespace pink {
 
+// 添加新任务。如果当前Pool已经满了，则阻塞等待
 void BGThread::Schedule(void (*function)(void*), void* arg) {
   mu_.Lock();
   while (queue_.size() >= full_ && !should_stop()) {
@@ -23,18 +24,21 @@ void BGThread::Schedule(void (*function)(void*), void* arg) {
   mu_.Unlock();
 }
 
+// 获取当前queue和priority_queue的大小
 void BGThread::QueueSize(int* pri_size, int* qu_size) {
   slash::MutexLock l(&mu_);
   *pri_size = timer_queue_.size();
   *qu_size = queue_.size();
 }
 
+// 清除当前任务队列，实现方法是换成一个空的队列？？？
 void BGThread::QueueClear() {
   slash::MutexLock l(&mu_);
   std::queue<BGItem>().swap(queue_);
   std::priority_queue<TimerItem>().swap(timer_queue_);
 }
 
+// 主函数，处理任务，如果当前队列里没有任务，则阻塞等待，所有的任务都封装在BGItem或TimerItem里
 void *BGThread::ThreadMain() {
   while (!should_stop()) {
     mu_.Lock();

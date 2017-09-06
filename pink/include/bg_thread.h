@@ -26,15 +26,15 @@ struct TimerItem {
   bool operator < (const TimerItem& item) const {
     return exec_time > item.exec_time;
   }
-}; 
+};
 
 class BGThread : public Thread {
  public:
   explicit BGThread(int full = 100000) :
-    Thread::Thread(), 
+    Thread::Thread(),
     full_(full),
     mu_(),
-    rsignal_(&mu_), 
+    rsignal_(&mu_),
     wsignal_(&mu_) {
     }
 

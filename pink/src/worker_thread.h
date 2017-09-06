@@ -68,7 +68,7 @@ class WorkerThread : public Thread {
   slash::Mutex mutex_;
 
   mutable slash::RWMutex rwlock_; /* For external statistics */
-  std::map<int, PinkConn*> conns_;
+  std::map<int, PinkConn*> conns_;  // fd到PinkConn的mapping
 
   void* private_data_;
 

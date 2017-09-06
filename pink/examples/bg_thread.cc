@@ -71,7 +71,7 @@ int main() {
     t2.QueueSize(&pqsize, &qsize);
     sleep(1);
   }
-  
+
   std::cout << "TimerItem Struct... " << std::endl;
   std::priority_queue<TimerItem> pq;
   pq.push(TimerItem(1, task, NULL));
